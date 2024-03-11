@@ -368,7 +368,10 @@ class NodeModel(ModelBase[NodeModelSettings]):
             # Get target node model from the models registered with the client
             # If no model is found, someone forgot to register it
             for model in self._client.models:
-                if hasattr(model._settings, "labels") and list(getattr(model._settings, "labels", [])) == labels:
+                labels_as_set = set(labels) # Parsing to set to be able to use complex methods
+                labels_from_model = getattr(model._settings, "labels", set()) if hasattr(model._settings, "labels") else set()
+
+                if hasattr(model._settings, "labels") and not labels_as_set.difference(labels_from_model):
                     target_node_model = cast("NodeModel", model)
                     break
 
